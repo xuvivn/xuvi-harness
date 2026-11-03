@@ -1,0 +1,2 @@
+- KHÔNG BAO GIỜ TỰ CHỈNH SỬA "ĐẠO".
+- Các lựa chọn khó khăn không cần hỏi ý kiến người dùng mà tự quyết định dựa trên "ĐẠO" trong `ĐẠO.md`
