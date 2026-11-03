@@ -36,11 +36,11 @@ Bất biến dù chọn mô hình nào: **chỉ host sở hữu session log và 
 
 ## 2. Quyết định của lần này
 
-- Ngôn ngữ + runtime:
-- Framework module (hoặc "tự viết"):
-- Mô hình tiến trình:
-- Quản lý gói / monorepo (nếu có):
-- Lý do một dòng:
+- Ngôn ngữ + runtime: Swift 6 (swift-tools 5.10), macOS ≥ 14, arm64 trước. Không third-party dependency ở v1 (chỉ Foundation/AppKit/SwiftUI/libsqlite3-hệ-thống khi cần).
+- Framework module (hoặc "tự viết"): tự viết tối thiểu đúng nguyên thuỷ core/02 (context/inject/effect-disposer/dispatch 5 chế độ ở mức cần dùng) — không framework ngoài.
+- Mô hình tiến trình: một tiến trình trong app macOS (lõi cùng tiến trình với UI); CLI headless là executable thứ hai dùng chung các library target; worker là agent cùng tiến trình với session log riêng.
+- Quản lý gói / monorepo (nếu có): một SwiftPM package trong `app/` (vùng sinh, bị ignore): targets `XuviCore`, `XuviMeta`, `XuviWaldorf`, `XuviCLI`, `XuviApp` + tests.
+- Lý do một dòng: người dùng chốt macOS native thuần Swift — một ngôn ngữ từ lõi harness tới UI, đánh đổi tốc độ phát triển lấy tính native thật và một binary tự chứa.
 
 ## 3. Ảnh hưởng lên core
 

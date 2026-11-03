@@ -53,14 +53,17 @@ Mỗi model (theo đúng provider của nó) cần các dữ kiện mà [core/05
 
 | Provider id | Đường gọi | Xác thực | Model mặc định | Ghi chú |
 |---|---|---|---|---|
-| | | | | |
+| `meta` | API chính thức Meta (`https://api.meta.ai/v1`) | API key, tham chiếu bí mật duy nhất `META_API_KEY` | `muse-wonder-1.0` | Provider **duy nhất** của lần này. Không đăng ký adapter/provider nào khác; DeepSeek Harness chỉ là công cụ bootstrap sinh hệ, không nằm trong sản phẩm |
 
-| Provider / Model | Context | Effort hỗ trợ | Modal | Ghi chú |
-|---|---|---|---|---|
-| | | | | |
+| Provider / Model | Vai trò | Context | Effort hỗ trợ | Modal | Ghi chú |
+|---|---|---|---|---|---|
+| `meta` / `muse-wonder-1.0` | **orchestrator** — agent chính: chẩn đoán, lập kế hoạch, việc phức tạp/mơ hồ/xuyên module, tích hợp kết quả worker, review, phán quyết | không rõ (chờ kiểm chứng tài liệu Meta chính thức — cấm đoán) | không rõ | text (+image/file nếu tuyến xác nhận) | Tuyến mặc định của mọi session người dùng và profile `evolution` |
+| `meta` / `muse-spark-1.3-contributor` | **worker** — agent con việc tự chứa có ranh giới; đồng thời là tuyến `aux` (tiêu đề session, tóm tắt nén) | không rõ (như trên) | không rõ | text | Chỉ được chọn qua preset agent con/`aux`, sau khi `GET /v1/models` tại repo này xác nhận còn tồn tại; không âm thầm fallback |
+| `meta` / `muse-image-1.0` | capability Waldorf (không phải agent) | — | — | text→image | Sinh tranh cảnh; lỗi provider hiển thị thành thật, không giả thành công |
+| `meta` / `muse-voice-transcribe-1.0` | capability Waldorf (không phải agent) | — | — | audio→text | `POST /v1/asr/transcribe`, WAV mono PCM16 16/24kHz; xem `plugins/waldorf/specs/03_research_and_architecture.md` §2 |
 
-- Model dùng cho việc phụ (tóm tắt nén, đặt tiêu đề session…): có thể là model rẻ/nhanh khác — ghi rõ:
-- Lý do một dòng:
+- Model dùng cho việc phụ (tóm tắt nén, đặt tiêu đề session…): tuyến worker `muse-spark-1.3-contributor` với `purpose: aux` qua cùng gateway — không mở tuyến text thứ ba.
+- Lý do một dòng: một provider, hai vai rõ ràng — Wonder giữ mạch và phán quyết, Spark Contributor gánh việc con cách ly ngữ cảnh; đúng nhu cầu người dùng và hợp đồng subagent ở core/10.
 
 ## 6. Ảnh hưởng lên core
 

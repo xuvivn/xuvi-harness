@@ -51,13 +51,13 @@ Nếu một OS không có cơ chế đạt mức yêu cầu tối thiểu của 
 
 ## 5. Quyết định của lần này
 
-- OS đích và thứ tự ưu tiên:
-- Thư mục harness trên mỗi OS:
-- Backend lưu session:
-- Chính sách ghi/flush/nén:
-- Sandbox theo OS (bảng mục 3 đã điền):
-- Dạng phân phối + kênh plugin:
-- Lý do một dòng:
+- OS đích và thứ tự ưu tiên: macOS ≥ 14 (arm64) là đích duy nhất của v1; OS khác đỗ lại.
+- Thư mục harness trên mỗi OS: `~/Library/Application Support/XuViHarness/` (profile, sessions, dữ liệu Waldorf, đính kèm). Workspace làm việc của agent là thư mục dự án người dùng chọn, tách khỏi thư mục dữ liệu này.
+- Backend lưu session: mỗi session một file log JSONL append-only (đúng core/11: đọc được tiền tố hợp lệ, header đọc riêng được). Dữ liệu domain Waldorf: JSON Codable ghi nguyên tử (ghi file tạm → thay thế) kèm backup trước khi ghi; đây là cài đặt đầu tiên của seam persistence — chuyển SQLite qua đúng seam khi quy mô/truy vấn đòi, không sửa consumer.
+- Chính sách ghi/flush/nén: append sự kiện theo lô nhỏ, flush tại biên turn/step và khi đóng session/thoát app; không nén ở v1 (định dạng mang phiên bản trong header để migration ghi bản mới bên cạnh).
+- Sandbox theo OS (bảng mục 3 đã điền): macOS — Seatbelt `sandbox-exec` cho shell tool, mức kỳ vọng `partial`→`full` tuỳ hồ sơ giam, báo thành thật; các OS khác chưa hỗ trợ ở v1 nên không khai.
+- Dạng phân phối + kênh plugin: SwiftPM package → script lắp `.app` ký ad-hoc; plugin chỉ là module đóng sẵn trong package (Waldorf), chưa có kênh cài plugin ngoài ở v1.
+- Lý do một dòng: lưu trữ đơn giản nhất vẫn giữ bất biến log-là-sự-thật và khôi phục được; mọi nâng cấp đi qua seam, không qua sửa consumer.
 
 ## 6. Ảnh hưởng lên core
 

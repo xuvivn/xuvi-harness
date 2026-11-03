@@ -36,15 +36,18 @@
 
 ## 4. Quyết định của lần này
 
-- Nơi thực thi mặc định:
-- Endpoint/gateway (nếu tự quản):
-- Timeout treo luồng:
-- Chính sách retry:
-- Tham chiếu bí mật cho từng provider:
-- Giới hạn đồng thời:
-- Ngưỡng áp lực ngữ cảnh theo bậc:
-- Model tóm tắt nén:
-- Lý do một dòng:
+- Nơi thực thi mặc định: API đám mây Meta, gọi trực tiếp từ adapter trong tiến trình app/CLI.
+- Endpoint/gateway (nếu tự quản): `https://api.meta.ai/v1` (chat-completions tương thích cho text; `/images/generations`; `/asr/transcribe`). **Allowlist mạng: code sản phẩm chỉ gọi host này**; override base URL (env `META_API_BASE`) chỉ để trỏ mock server localhost trong test.
+- Timeout treo luồng: 5 phút không chunk mới (cấu hình được); huỷ của người gọi luôn thắng.
+- Chính sách retry: tầng trên adapter, tối đa 5 lần, chỉ mã tạm thời, tôn trọng `Retry-After`; adapter tắt retry của thư viện bên dưới, một lần gọi adapter = một lần thử.
+- Tham chiếu bí mật cho từng provider: chỉ một — `META_API_KEY` cho provider `meta`. Nguồn theo thứ tự: biến môi trường tiến trình → `.env` do chính app/CLI nạp lúc runtime (agent làm việc không đọc giá trị) → Keychain của chính app khi người dùng tự nhập trong Settings. Key không vào config, log, UI (ngoài trường nhập bảo mật), báo cáo hay backup.
+- Làm rõ cho app theo yêu cầu nhập trên UI: khóa đã lưu từ Cài đặt được ưu tiên
+  trước env/.env, để thao tác thay khóa có hiệu lực. CLI không inject store giữ
+  thứ tự cũ. Contract ở [cau-hinh-meta-tren-ui.md](cau-hinh-meta-tren-ui.md).
+- Giới hạn đồng thời: trần uỷ quyền của orchestrator: độ sâu 1, tối đa 3 worker song song; mỗi worker có ngân sách token/tool-call và timeout riêng (cấu hình trong profile, không viết cứng).
+- Ngưỡng áp lực ngữ cảnh theo bậc: bậc 1 cắt kết quả tool quá trần (mặc định 8000 ký tự, phần dư truy hồi bằng tham chiếu); bậc 2 uỷ quyền agent con ngữ cảnh sạch; bậc 3 nén bằng tuyến `aux` — chỉ bật khi đã có bộ đếm token từ log + usage thật, và metadata cửa sổ của tuyến đã kiểm chứng (chưa rõ thì không tự đặt ngưỡng theo % cửa sổ).
+- Model tóm tắt nén: `muse-spark-1.3-contributor` (`purpose: aux`), cùng gateway.
+- Lý do một dòng: một host, một bí mật, hai vai model — bề mặt tin cậy nhỏ nhất để kiểm chứng được tuyên bố "chỉ dùng META_API_KEY".
 
 ## 5. Ảnh hưởng lên core
 

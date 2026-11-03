@@ -37,6 +37,20 @@ Mỗi loop vẫn qua đủ: sửa specs trước nếu ý định đổi → sin
 kết quả. Hết hai ngày hoặc hết ngân sách trước khi xong loop 3 là dừng bình
 thường theo điều kiện dừng của `cron.md` — ghi lại trạng thái, không chạy cố.
 
+## 2b. Điều chỉnh ngày 2026-11-03 (theo yêu cầu người dùng — spec 11)
+
+Người dùng chốt lại: sản phẩm là **macOS native thuần Swift**, chỉ dùng
+`META_API_KEY`, với `muse-wonder-1.0` làm orchestrator và
+`muse-spark-1.3-contributor` làm worker. Lượt đầu chạy trên DeepSeek Harness
+sinh **cả xuvi-harness lẫn Waldorf tích hợp**; tests đạt và qua cổng dogfood
+thì chuyển hẳn sang xuvi-harness, không dùng DeepSeek Harness nữa.
+
+Theo đó, spec `11_macos-native-swift-va-tich-hop-harness.md` **thay thế** thứ
+tự trong mục 2 và điều "không xây harness generic" trong mục 3 dưới đây cho
+đợt này. Mốc của đợt ở mục 1 và kịch bản demo ở mục 4 giữ nguyên. Các mục còn
+lại của file này giữ vai trò lịch sử/bối cảnh cho tới khi spec 11 được thực
+thi và đo lại.
+
 ## 3. Điều cố tình không làm trong đợt này
 
 - **Không xây lại harness generic** (`harness/specs/core/*`). Harness trong đợt

@@ -50,3 +50,10 @@ Mỗi lần quét, trả lời ba câu hỏi cho các model đang dùng (hiện 
   và quyết định nó thay đổi. Nội dung gốc ở lại nguồn của nó, kèm provenance.
 - Không dùng nguồn không mở lại được (link chết, ảnh chụp không nguồn) làm
   căn cứ cho một tuyên bố trong sản phẩm.
+
+## 5. Tham khảo thiết kế local được chỉ định
+
+| Nguồn | Phạm vi | Ngày kiểm tra / quyết định |
+|---|---|---|
+| `xuvi-waldorf/client/src/App.tsx`, `client/src/styles.css` | Người dùng cho phép tham khảo UI; chỉ mã giao diện, không dữ liệu/secret | 2026-11-03 — adopt màu giấy/xanh rừng, điều hướng theo việc và tổng quan; spec Waldorf 12. Không kế thừa mức bằng chứng hoặc nghiệp vụ chưa chạy tại đây |
+| `minhxuvi` — lịch năm học & khung Khối 11 Tiền tệ (`Lịch_năm_học.md`, `00_Chỉ_mục_khối.md`, `11_Tiền_tệ.md`, `Nhà Thuận Nhiên - Chương trình học.md` mục Tiền tệ / Hành trình về miền đất hứa) | Người dùng chỉ định lấy bối cảnh kế hoạch block kế tiếp sau kỳ nghỉ Thu (02–15/11/2026) để thử XuVi Story; chỉ lấy chủ đề học và mạch truyện lớp 3, tuyệt đối không đọc/đưa dữ liệu học sinh hay ghi chép cá nhân | 2026-11-03 — adopt bối cảnh Khối 11 Tiền tệ (16/11–06/12/2026: đổi hàng → vỏ sò/đồng xu → giá trị lao động & niềm tin chung) và mạch đọc/kể *Hành trình về miền đất hứa* vào seed thử nghiệm của spec Waldorf 12; gắn nhãn rõ nguồn biên soạn cho lớp |

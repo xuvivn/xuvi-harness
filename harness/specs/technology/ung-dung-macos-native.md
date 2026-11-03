@@ -51,13 +51,13 @@ Yêu cầu cho kênh, dù chọn cách nào: có bắt tay sẵn-sàng (UI khôn
 
 ## 3. Quyết định của lần này
 
-- Công nghệ cửa sổ:
-- Kênh native ↔ lõi:
-- App Sandbox (Apple) bật/tắt + entitlement cần:
-- Backend giam thực thi macOS:
-- Ký số/notarize:
-- Việc lõi khi đóng cửa sổ / thoát app:
-- Lý do một dòng:
+- Công nghệ cửa sổ: **SwiftUI thuần native** (+ AppKit ở điểm hệ điều hành cần), không WKWebView, không framework đa nền.
+- Kênh native ↔ lõi: lõi chạy **trong cùng tiến trình** app (thư viện SwiftPM nhúng); UI gọi agent/session qua giao diện trong tiến trình, hiển thị từ feed sự kiện + stream sống — UI không giữ nguồn sự thật hội thoại thứ hai. CLI headless là tiến trình riêng dùng chung library.
+- App Sandbox (Apple) bật/tắt + entitlement cần: **Tắt ở v1** (bản ad-hoc chạy local). Truy cập file qua hộp thoại chọn của người dùng (NSOpenPanel). Bật sandbox + entitlement user-selected là việc của loop phát hành, không gộp với sandbox thực thi bên dưới.
+- Backend giam thực thi macOS: Seatbelt qua `sandbox-exec` cho shell tool của model, mức thực thi báo `full/partial` thành thật (core/13).
+- Ký số/notarize: ký **ad-hoc** (`codesign --sign -`) để chạy trên máy này; Developer ID + notarize đỗ lại tới khi có chứng chỉ của người dùng và nhu cầu phát hành ra máy khác.
+- Việc lõi khi đóng cửa sổ / thoát app: đóng cửa sổ **không** giết agent đang chạy (app còn sống ở Dock/menu); Cmd-Q/thoát app mới huỷ hợp tác các turn đang bay, flush session log, rồi thoát có trật tự.
+- Lý do một dòng: native thật ở cả UI lẫn lõi với chi phí vận hành thấp nhất cho bản local đầu tiên; các nghĩa vụ phát hành để sau khi sản phẩm sống được.
 
 ## 4. Ảnh hưởng lên core
 
