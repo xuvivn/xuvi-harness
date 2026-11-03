@@ -71,14 +71,25 @@ nghiệm ngay trên giao diện mới, gồm:
 4. **Hồ sơ:** sáu lựa chọn dễ hiểu, xem trước văn bản có phân cấp; copy Markdown
    bằng nút thật và phản hồi đã sao chép. Không tuyên bố có Print/PDF/DOCX nếu
    chưa có action thực thi. Nêu dữ liệu minh họa, không chứng nhận chính thức.
-5. **Trò chuyện:** lời chào theo công việc, gợi ý bắt đầu, phân biệt Bạn/XuVi,
-   composer rõ, trạng thái đang chạy/không cấu hình. Thông tin model/ủy quyền
+5. **Trò chuyện:** lời chào theo công việc, gợi ý bắt đầu (gồm câu hỏi tự nhận thức
+   *"Bạn có thể tự cập nhật chính mình không?"* và các gợi ý chuẩn bị bài kể), phân biệt
+   Bạn/XuVi, composer rõ, trạng thái đang chạy/không cấu hình. Thông tin model/ủy quyền
    nằm trong vùng chi tiết gập mặc định. Ngay cạnh Gửi nêu nội dung sẽ được gửi
-   đến Meta; không tự gửi khi vào trang. Gợi ý không ngụ ý trợ lý đã đọc truyện
-   hoặc lịch trong app: hiện chỉ gửi đoạn người dùng nhập. Tin nhắn mới phải
-   cuộn tới được trong lịch sử. Không đổi agent/core.
+   đến Meta; không tự gửi khi vào trang. Lịch sử hội thoại giữ liên tục qua các lượt
+   trong `SessionLog` (bền vững trên đĩa ở chế độ thường, chỉ trong bộ nhớ ở `--ui-preview`).
+   Orchestrator (`muse-wonder-1.0`) và Worker (`muse-spark-1.3-contributor`) được trang bị
+   ngữ cảnh tự nhận thức trung thực về kiến trúc XuVi Harness và bộ công cụ tự cập nhật
+   (`xuvi_self_status`, `xuvi_garden_update`, `xuvi_self_update_run`, `delegate`) để có thể
+   trả lời trung thực và thực thi tự cập nhật 3 tầng (dữ liệu Vườn học bền vững, ghi nhận
+   propose/chạy loop `evolution` qua `EvolutionGateJudge`, và tự kiểm tra/biên dịch lại
+   `.app` cục bộ), đồng thời nói rõ giới hạn không sửa trọng số mô hình trên máy chủ Meta
+   và không bao giờ sửa `ĐẠO.md`.
 6. **Cài đặt:** giữ SecureField, Lưu/Xóa và contract spec cấu hình Meta; tách
-   kết nối, dữ liệu minh họa và thông tin kỹ thuật; không hiển thị giá trị khóa.
+   kết nối, dữ liệu minh họa (ở chế độ thường đã lưu bền qua `WaldorfStore` có `.bak`,
+   có nút khôi phục bộ truyện mẫu khi cần), **Tự cập nhật & Tiến hoá** (hiển thị phiên bản,
+   SHA256 binary, trạng thái kiểm thử & cổng `EvolutionGateJudge`, số đề xuất tiến hoá,
+   cùng nút thật *"Tự kiểm tra & cập nhật ứng dụng"*) và thông tin kỹ thuật; không hiển thị
+   giá trị khóa.
 
 ## Kiểm tra cô lập
 

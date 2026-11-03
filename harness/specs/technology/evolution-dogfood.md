@@ -79,4 +79,73 @@ Lần sinh tiếp phải có phán quyết bằng dữ liệu máy kiểm đư�
 thiếu bất kỳ cổng bắt buộc hoặc chưa có phép đo trước/sau tổng thể ⇒ ĐỖ,
 model không được override. Báo cáo model là nháp; không tự làm nguồn xác nhận
 cho chính nó. Verifier phải có test phủ định KEEP + CHƯA ĐO và từ chối nâng
-trạng thái chuyển nhà. Dừng đợt hiện tại để ghi bài học, chưa tiếp tục nâng điểm.
+trạng thái chuyển nhà.
+
+---
+
+## Hợp nhất vào runtime gốc và cơ chế Tự cập nhật 3 tầng (2026-11-03, Loop Self-Update)
+
+Để công cụ (`xuvi` CLI và ứng dụng macOS `XuVi — Vườn học`) thực sự **tự cập nhật
+chính mình** một cách trung thực theo Đạo và `cron.md`, hệ thống hợp nhất
+`Evolution.swift` vào runtime gốc `app/Sources/XuviCore/Evolution.swift` cùng
+bộ điều khiển phán quyết máy kiểm được và cơ chế tự cập nhật 3 tầng:
+
+### 1. Cổng phán quyết máy kiểm được (`EvolutionGateJudge`)
+
+- Đọc báo cáo nháp của orchestrator cùng kết quả `[EvolutionCheck]` từ `EvolutionVerifier`.
+- Trích xuất trạng thái từng cổng `G1`, `G2`, `G3` (`ĐẠT` / `CHƯA ĐẠT` / `CHƯA ĐO`)
+  và phán quyết nháp của model (`KEEP`/`GIỮ`, `REVERT`/`HUỶ`, `PARK`/`ĐỖ`).
+- **Quy tắc bất biến (Cổng 2 trong `cron.md`):**
+  - Nếu có bất kỳ check kỹ thuật nào trong `EvolutionVerifier` thất bại ⇒
+    `controllerVerdict = .revert` (`HUỶ`), `canPromote = false`.
+  - Nếu mọi check kỹ thuật đạt nhưng bất kỳ cổng nào trong `G1`, `G2`, `G3` là
+    `CHƯA ĐO`, `CHƯA ĐẠT`, hoặc không khai báo tường minh `ĐẠT` ⇒
+    `controllerVerdict = .park` (`ĐỖ`), `canPromote = false`, `overrodeModelKeep = (modelDraft == .keep)`.
+    Model tự viết `Giữ (KEEP)` trong nháp **bị bác tự động** ở tầng controller.
+  - Chỉ khi toàn bộ check kỹ thuật đạt **và** cả 3 cổng `G1`, `G2`, `G3` đều
+    được xác nhận `ĐẠT` (không có chuỗi `CHƯA ĐO`/`CHƯA ĐẠT` trên cùng dòng cổng)
+    và model không yêu cầu `HUỶ`/`ĐỖ` ⇒ `controllerVerdict = .keep` (`GIỮ`), `canPromote = true`.
+
+### 2. Ba tầng tự cập nhật trung thực của XuVi (`SelfUpdate`)
+
+Khi người dùng hỏi *"Bạn có thể tự cập nhật chính mình không?"* hoặc yêu cầu công
+cụ tự cập nhật, XuVi thực thi và giải thích trung thực theo 3 tầng có thật:
+
+1. **Tầng 1 — Tự cập nhật dữ liệu & trí nhớ bền vững trong ứng dụng (`WaldorfStore` + `SessionLog` + `SelfUpdateStore`)**:
+   - Ở chế độ thường (không phải `--ui-preview`), `XuViApp` lưu bền dữ liệu Vườn học
+     tại `~/Library/Application Support/XuViHarness/waldorf.json` (ghi nguyên tử qua
+     candidate trong `WaldorfStore.update`, tự tạo `.bak` và khôi phục khi file chính hỏng),
+     lưu bền nhật ký hội thoại tại `~/Library/Application Support/XuViHarness/sessions/chat-session.jsonl`,
+     và lưu trạng thái tự tiến hoá tại `~/Library/Application Support/XuViHarness/self-update-state.json`.
+   - Qua công cụ `xuvi_garden_update` và `xuvi_self_status` trong mục `Trò chuyện`,
+     orchestrator (`muse-wonder-1.0`) có thể tự đọc trạng thái hiện tại, thêm hoặc
+     cập nhật truyện/cảnh/mục tiêu/chủ đề năm học trong `WaldorfStore`, và ghi nhận
+     đề xuất tiến hoá mới vào `SelfUpdateStore` — thay đổi phản ánh ngay trên UI và
+     bền vững qua các lần khởi động lại.
+2. **Tầng 2 — Tự tiến hoá specs → code → kiểm thử trong bản sao cô lập (`xuvi evolution-live`)**:
+   - Orchestrator (`muse-wonder-1.0`) tự đọc `ĐẠO.md`, `README.md`, `cron.md`,
+     `specs` (JIT), lập `todo`, sửa spec nhiệm vụ trước, uỷ quyền (`delegate` đủ 4
+     thành phần) cho worker (`muse-spark-1.3-contributor`) viết test regression,
+     review artefakt con, sửa `Sources/`, chạy `run_tests` dưới `sandbox-exec`
+     (fail-closed, không mạng), và được kiểm định bởi `EvolutionVerifier` +
+     `EvolutionGateJudge`.
+3. **Tầng 3 — Tự kiểm tra, biên dịch & cập nhật gói ứng dụng cục bộ (`SelfUpdater` / `xuvi self-update` / `xuvi_self_update_run`)**:
+   - Chạy bộ kiểm thử tự động `xuvi-tests` dưới `sandbox-exec` (hoặc runner cố định)
+     để xác nhận toàn bộ bất biến hệ thống (`passed > 0, failed == 0`).
+   - Khi có yêu cầu rebuild/self-update trên workspace nguồn hợp lệ (có `Package.swift`,
+     `ĐẠO.md` nguyên vẹn) và toàn bộ kiểm thử đạt: biên dịch binary mới, sao lưu
+     bundle `.app` cũ sang `.app.bak`, đóng gói và ký ad-hoc (`codesign --force --sign -`
+     + `codesign --verify --strict`) bundle mới, ghi `SelfUpdateManifest` (phiên bản,
+     thời điểm, SHA256 binary, số test PASS, phán quyết cổng). Nếu bất kỳ bước nào
+     thất bại, tự động khôi phục từ `.app.bak` và báo lỗi trung thực.
+
+### 3. Ranh giới trung thực (Cổng G1/G2/G3)
+
+- **Không nói quá khả năng (G2):** XuVi nói rõ mình tự cập nhật dữ liệu bền vững,
+  ghi nhận đề xuất tiến hoá, chạy loop `evolution` sửa specs/code trong workspace
+  cô lập và tự biên dịch/đóng gói lại bản `.app` cục bộ qua cổng kiểm thử; XuVi
+  **không** tự sửa trọng số mô hình AI trên máy chủ Meta và **không** tự ý vượt
+  cổng `EvolutionGateJudge`.
+- **Bảo vệ Đạo & riêng tư (G1/G3):** Mọi tool tự cập nhật từ chối tuyệt đối việc
+  ghi/sửa `ĐẠO.md` và chặn đọc/ghi `.env`, khoá bí mật, symlink hay đường dẫn
+  ngoài phạm vi. Chế độ `--ui-preview` giữ cô lập hoàn toàn trong bộ nhớ.

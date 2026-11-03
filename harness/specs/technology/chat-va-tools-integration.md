@@ -57,8 +57,8 @@ Nhắc lại bất biến (core/08, mục 2.9): tool ngoài đi qua đúng pipel
 
 ## 5. Quyết định của lần này
 
-- Mặt tiếp xúc chính (và phụ, nếu có): chính — app macOS native SwiftUI (chat/agent + màn hình Waldorf); phụ — headless CLI (một việc rồi thoát, cho test/dogfood).
-- Bộ tool mặc định (bảng mục 2 đã điền): File (đọc/glob/grep tự do; ghi/sửa qua approval), Shell (qua approval + sandbox-exec), Việc & phối hợp (todo bật; **subagent bật chỉ cho orchestrator**, preset worker không có tool này nên độ sâu tối đa 1; job/workflow tắt ở v1), Hỏi người/approval bật, Skill tắt ở v1, Web tắt (sản phẩm chỉ gọi `api.meta.ai`).
+- Mặt tiếp xúc chính (và phụ, nếu có): chính — app macOS native SwiftUI (chat/agent + màn hình Waldorf); phụ — headless CLI (một việc rồi thoát, cho test/dogfood/self-update).
+- Bộ tool mặc định (bảng mục 2 đã điền): File (đọc/glob/grep tự do; ghi/sửa qua approval), Shell (qua approval + sandbox-exec), Việc & phối hợp (todo bật; **subagent bật chỉ cho orchestrator**, preset worker không có tool này nên độ sâu tối đa 1; job/workflow tắt ở v1), Tự cập nhật & Vườn học trong app (`xuvi_self_status`, `xuvi_garden_update`, `xuvi_self_update_run` cho phép kiểm tra trạng thái, cập nhật bền vững `WaldorfStore`/`SelfUpdateStore` và chạy tự kiểm tra/cập nhật qua cổng kiểm thử), Hỏi người/approval bật, Skill tắt ở v1, Web tắt (sản phẩm chỉ gọi `api.meta.ai`).
 - Preset quyền mặc định: `ask` cho ghi-file/chạy-lệnh trong app; preset worker kế thừa và chỉ được bớt quyền (worker research = chỉ đọc). Headless dogfood dùng `never` giới hạn trong bản sao workspace dùng-một-lần.
 - Nguồn tool ngoài: không ở v1.
 - Phong cách thẻ tool (một dòng): thẻ thu gọn theo presenter thuần (đang chờ từ args, hoàn thành từ args + kết quả đã lưu), cây uỷ quyền orchestrator → worker hiển thị model + trạng thái + bản chưng cất, mở lại session vẽ lại y hệt.
