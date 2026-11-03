@@ -112,3 +112,25 @@ Bản đầy đủ kèm các khái niệm phụ (inbox, scope, projection…): x
 Specs này được reverse-engineer từ DeepSeek Harness (kiến trúc plugin trên một framework context/event, session log dạng event-sourcing, các seam khả năng). File [core/15-ban-do-doi-chieu-deepseek-harness.md](core/15-ban-do-doi-chieu-deepseek-harness.md) đối chiếu từng spec với package/tài liệu gốc để bạn tra cứu cài đặt tham chiếu khi cần. Khi specs generic và cài đặt gốc khác nhau, **specs generic thắng** — mục tiêu là harness của bạn, không phải bản sao.
 
 Phần kỹ thuật ngữ cảnh (ý tưởng 6 ở trên, [core/07](core/07-prompt-va-ngu-canh.md), phần thiết kế tool trong [core/06](core/06-tools-va-thuc-thi.md) và phần ngữ cảnh dài hạn trong [core/10](core/10-phoi-hop-va-mo-rong.md)) tham chiếu các bài viết của Anthropic: [Effective context engineering for AI agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents), [Writing effective tools for AI agents](https://www.anthropic.com/engineering/writing-tools-for-agents) và [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system). Các bài viết đó là nguồn nguyên tắc; cách diễn đạt thành giao diện và bất biến trong bộ specs này vẫn theo quy tắc vàng ở trên (core trung lập công nghệ).
+
+---
+
+## Vị trí của harness trong hệ tự tiến hoá
+
+Bộ specs này là **một tầng** của XuVi Harness — hệ agent tự tiến hoá có
+[ĐẠO.md](../../ĐẠO.md) làm la bàn (bức tranh toàn hệ: [README.md](../../README.md)).
+Quan hệ cần nhớ khi sửa bất cứ file nào ở đây:
+
+- Harness là *runtime* mà các plugin (đầu tiên: `plugins/waldorf/`) chạy trên đó.
+  Thay đổi ở harness specs phải tự hỏi: nó làm mọi plugin tốt lên, hay chỉ đang
+  vá cho một plugin? Trường hợp sau thuộc về specs của plugin đó.
+- Harness **tiến hoá qua loop** định nghĩa ở [cron.md](../../cron.md): sửa specs
+  ở đây chỉ được giữ khi benchmark tổng thể
+  ([benchmark/specs/01-benchmark-tong-the.md](../../benchmark/specs/01-benchmark-tong-the.md),
+  đặc biệt chiều B4) đo trước/sau và kết quả được lưu trong `benchmark/results/`.
+- Trong loop đầu tiên (hackathon), harness ở vai *agent đang chạy loop*, không
+  phải sản phẩm code thứ hai phải xây: xem
+  [plugins/waldorf/specs/10_loop-dau-tien-hackathon.md](../../plugins/waldorf/specs/10_loop-dau-tien-hackathon.md).
+  Vì vậy `technology/quyet-dinh-hien-tai.md` còn trống là trạng thái đúng cho
+  tới khi một điểm nghẽn benchmark thật sự nằm ở tầng harness — không điền nó
+  chỉ để "cho đủ bộ".

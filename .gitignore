@@ -4,6 +4,7 @@
 !cron.md
 !ĐẠO.md
 !LICENSE
+!README.md
 
 !harness/
 !harness/specs/
@@ -12,6 +13,8 @@
 !benchmark/
 !benchmark/specs/
 !benchmark/specs/**
+!benchmark/results/
+!benchmark/results/**
 
 !research/
 !research/specs/
