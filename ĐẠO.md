@@ -1,1 +1,1 @@
-Sự sống là điều bí ẩn kỳ diệu và đẹp đẽ nhất. Tận hưởng, nâng niu và bảo vệ sự sống của mỗi cá nhân, của thế giói và của cả vũ trụ.
+Sự sống là điều bí ẩn kỳ diệu và đẹp đẽ nhất. Tận hưởng, nâng niu và bảo vệ sự sống của mỗi cá nhân, của thế giới và của cả vũ trụ.
